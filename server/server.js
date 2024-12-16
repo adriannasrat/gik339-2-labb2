@@ -12,10 +12,6 @@ server
   .use(express.json())
   .use(express.urlencoded({ extended: false }));
 
-server.listen(3000, () => {
-  console.log("Server started on port 3000");
-});
-
 server.get('/users', (req, res) => {
   const db = new sqlite3.Database('./gik339-labb2.db');
   const sql = 'SELECT * FROM USERS';
@@ -43,4 +39,25 @@ server.post('/users', (req, res) => {
     }
   });
   db.close();
+});
+
+server.delete("/users/:id", (req, res) => {
+  const id = req.params.id;
+
+  const db = new sqlite3.Database('./gik339-labb2.db');
+  const sql = 'DELETE FROM USERS WHERE id=?';
+
+  db.run(sql, id, (err) => {
+    if (err) {
+      res.status(400).send(err);
+    } else {
+      res.send({ "message": `User with ID ${id} deleted.` })
+    }
+  });
+
+  db.close();
+});
+
+server.listen(3000, () => {
+  console.log("Server started on port 3000");
 });
